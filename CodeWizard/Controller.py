@@ -1,5 +1,5 @@
 import web
-from Models import RegisterModel, LoginModel
+from Models import RegisterModel, LoginModel, Posts
 
 web.config.debug = False
 
@@ -9,7 +9,12 @@ urls = (
     '/login', 'Login',
     '/logout', 'Logout',
     '/postregistration', 'PostRegistration',
-    '/check-login', "CheckLogin"
+    '/check-login', "CheckLogin",
+    '/post-activity', "PostActivity"
+    '/profile/(.*)/info', 'UserInfo',
+    '/settings', 'UserSettings',
+    '/update-settings', 'UpdateSettings',
+    '/profile/(.*)', 'UserProfile'
 )
 
 
@@ -34,7 +39,10 @@ class Home:
         if isCorrect:
             session_data['user'] = isCorrect
 
-        return render.Home()
+        post_model = Posts.Posts()
+        posts = post_model.get_all_posts()
+
+        return render.Home(posts)
 
 
 class Register:
@@ -67,6 +75,42 @@ class CheckLogin:
             return isCorrect
 
         return "error"
+
+
+class PostActivity:
+    def POST(self):
+        data = web.input()
+        data.username = session_data['user']['username']
+
+        post_model = Posts.Posts()
+        post_model.insert_post(data)
+        return 'success'
+
+
+class UserSettings:
+    def GET(self):
+        data = type('obj', (object,), {
+            "username": "rook500", "password": "avocado1"})
+
+        login = LoginModel.LoginModel()
+        isCorrect = login.check_user(data)
+
+        if isCorrect:
+            session_data['user'] = isCorrect
+
+        return render.Settings()
+
+
+class UserSettings:
+    def POST(self):
+        data = web.input()
+        data.username = session_data['user']['username']
+
+        settins_model = LoginModel.LoginModel()
+        if settins_model.update_info(data):
+            return "success"
+        else:
+            return 'A fatal error has occurred'
 
 
 class Logout:

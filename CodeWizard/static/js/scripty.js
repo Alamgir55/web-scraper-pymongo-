@@ -50,4 +50,38 @@ $(document).ready(function(){
             }
         })
     });
+
+    $(document).on('submit', '#post-activity', function(e){
+        e.preventDefault()
+        console.log('post')
+        form = $(this).serialize()
+
+        $.ajax({
+            url: '/post-activity',
+            type: 'POST',
+            data: form,
+            success: function(res){
+                console.log(res)
+            }
+        })
+    })
+
+    $(document).on('submit', '#setting-form', function(e){
+        e.preventDefault()
+        var form = $(this).serialize()
+
+        $.ajax({
+            url: '/update-settings',
+            type: 'POST',
+            data: form,
+            success: function(res){
+                if(res == 'success'){
+                    window.location.href = window.location.href
+                }else {
+                    alert(res)
+                }
+            }
+        })
+    })
+
 });

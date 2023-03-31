@@ -20,3 +20,10 @@ class LoginModel:
 
         else:
             return False
+
+    def update_info(self, data):
+        updated = self.Users.update_one({
+            "username": data["username"]
+        }, {"$set": data})
+
+        return True
